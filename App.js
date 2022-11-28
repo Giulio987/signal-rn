@@ -7,6 +7,17 @@ import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 
+
+/**
+ * TODO
+ * Trasformare app in Typescript
+ * Gestire meglio gli errori
+ * Creare sottocomponenti ad hoc
+ * Capire se tenere le chat verso l'alto o verso il basso?
+ * Creare la funzionalità di inserimento immagine profilo
+ * Funzionalità salvataggio offline
+ */
+
 const Stack = createNativeStackNavigator();
 
 const globalScreenOptions = {
