@@ -9,7 +9,7 @@ import RegisterScreen from './screens/RegisterScreen';
 
 
 /**
- * TODO
+ * TODO - ordinare
  * Trasformare app in Typescript
  * Gestire meglio gli errori
  * Creare sottocomponenti ad hoc
