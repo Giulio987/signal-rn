@@ -4,6 +4,7 @@ import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 
 const useAuth = (registerAuth) => {
@@ -30,7 +31,13 @@ const useAuth = (registerAuth) => {
     );
   };
 
-  return { signIn };
+  const signOutUser = () => {
+    signOut(auth).then(() => {
+      navigation.replace('Login');
+    });
+  };
+
+  return { signIn, signOutUser };
 };
 
 export default useAuth;

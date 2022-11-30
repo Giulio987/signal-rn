@@ -32,17 +32,17 @@ preventAutoHideAsync();
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [initialRouteName, setInitialRouteName] = useState('Login');
-  const isUserLogged = getAuth();
+  const { currentUser } = getAuth();
 
   useEffect(() => {
-    if (isUserLogged) {
+    if (currentUser) {
       setInitialRouteName('Home');
       setAppIsReady(true);
     } else {
       setInitialRouteName('Login');
       setAppIsReady(true);
     }
-  }, [isUserLogged]);
+  }, [currentUser]);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {

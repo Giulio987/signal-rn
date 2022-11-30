@@ -9,25 +9,21 @@ import React, { useEffect, useLayoutEffect, useState } from 'react';
 import CustomListItem from '../components/CustomListItem';
 import { Avatar } from 'react-native-elements';
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
-import { getAuth, setPersistence, signOut } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import {
   collection,
   query,
   onSnapshot,
   getFirestore,
 } from 'firebase/firestore';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import useAuth from '../auth/hooks/useAuth';
 
 const HomeScreen = ({ navigation }) => {
   const [chats, setChats] = useState([]);
   const currentUser = getAuth().currentUser;
   const database = getFirestore();
-  const auth = getAuth();
-  const signOutUser = () => {
-    signOut(auth).then(() => {
-      navigation.replace('Login');
-    });
-  };
+
+  const { signOutUser } = useAuth();
 
   useEffect(() => {
     const q = query(collection(database, 'chats'));

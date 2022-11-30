@@ -139,7 +139,7 @@ const ChatScreen = ({ navigation, route }) => {
             <>
               <ScrollView contentContainerStyle={{ padding: 10 }}>
                 {messages.map(({ id, data }) =>
-                  data.email === currentUser.email ? (
+                  data.email === currentUser?.email ? (
                     <View key={id} style={styles.reciever}>
                       <Avatar
                         source={{
