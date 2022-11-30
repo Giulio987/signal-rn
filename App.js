@@ -6,16 +6,17 @@ import ChatScreen from './screens/ChatScreen';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-
-
+import { preventAutoHideAsync, hideAsync } from 'expo-splash-screen';
+import { useCallback, useEffect, useState } from 'react';
+import { getAuth } from 'firebase/auth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 /**
- * TODO - ordinare
- * Trasformare app in Typescript
- * Gestire meglio gli errori
+ * TODO
  * Creare sottocomponenti ad hoc
  * Capire se tenere le chat verso l'alto o verso il basso?
  * Creare la funzionalità di inserimento immagine profilo
- * Funzionalità salvataggio offline
+ * Funzionalità salvataggio offline dei token
+ * Gestione degli errori
  */
 
 const Stack = createNativeStackNavigator();
@@ -26,17 +27,47 @@ const globalScreenOptions = {
   headerTintColor: 'white',
 };
 
+preventAutoHideAsync();
+
 export default function App() {
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [initialRouteName, setInitialRouteName] = useState('Login');
+  const isUserLogged = getAuth();
+
+  useEffect(() => {
+    if (isUserLogged) {
+      setInitialRouteName('Home');
+      setAppIsReady(true);
+    } else {
+      setInitialRouteName('Login');
+      setAppIsReady(true);
+    }
+  }, [isUserLogged]);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (appIsReady) {
+      await hideAsync();
+    }
+  }, [appIsReady]);
+
+  if (!appIsReady) {
+    return null;
+  }
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={globalScreenOptions}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="AddChat" component={AddChatScreen} />
-        <Stack.Screen name="Chat" component={ChatScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions={globalScreenOptions}
+          initialRouteName={initialRouteName}
+        >
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Register" component={RegisterScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="AddChat" component={AddChatScreen} />
+          <Stack.Screen name="Chat" component={ChatScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </View>
   );
 }
 

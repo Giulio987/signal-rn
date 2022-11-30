@@ -1,6 +1,8 @@
-import * as firebase from 'firebase/compat';
-import 'firebase/compat/firestore';
-import 'firebase/compat/auth';
+import {initializeAuth} from 'firebase/auth';
+import { getReactNativePersistence } from "firebase/auth/react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { getFirestore } from 'firebase/firestore/lite';
+import { initializeApp } from 'firebase/app';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAeY1B4i1GzHOMp_6KJoJr-URbCmNvnETk',
@@ -12,14 +14,21 @@ const firebaseConfig = {
 };
 
 //NOTE ottimizzazione importing firebase, meglio non inizializzarla sempre
-let fire_app;
-if (firebase.apps.length === 0) {
-  fire_app = firebase.initializeApp(firebaseConfig);
-} else {
+/* let fire_app;
+if (firebase.apps.length === 0) { */
+  const fire_app = initializeApp(firebaseConfig);
+/* } else {
   fire_app = firebase.app();
-}
+} */
+initializeAuth(fire_app, {
+  persistence: getReactNativePersistence(AsyncStorage)
+});
+const db = getFirestore(fire_app);
 
-const db = fire_app.firestore();
+export { db };
+
+/* const db = fire_app.firestore();
 const auth = firebase.auth();
 
 export { db, auth };
+ */

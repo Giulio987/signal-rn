@@ -8,29 +8,27 @@ import {
 import React, { useLayoutEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Button from '../UI/Button';
-import { auth } from '../firebase';
+import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  const auth = getAuth();
 
-  //FAI QUALCOSA ESATTAMENTE PRIMA CHE SI RENDERIZZI QUALCOSA SULLO SCHERMO
-  useLayoutEffect(() => {
+  //NOTE FAI QUALCOSA ESATTAMENTE PRIMA CHE SI RENDERIZZI QUALCOSA SULLO SCHERMO
+  /*   useLayoutEffect(() => {
     navigation.setOptions({});
-  }, [navigation]);
+  }, [navigation]); */
 
   const register = () => {
-    auth
-      .createUserWithEmailAndPassword(email, password)
+    createUserWithEmailAndPassword(auth, email, password)
       .then((authUser) => {
-        authUser.user.updateProfile({
-          displayName: name,
-          photoUrl:
-            imageUrl ||
-            'https://cdn.imgbin.com/2/4/15/imgbin-computer-icons-portable-network-graphics-avatar-icon-design-avatar-DsZ54Du30hTrKfxBG5PbwvzgE.jpg',
-        });
+        (authUser.user.photoURL =
+          imageUrl ||
+          'https://cdn.imgbin.com/2/4/15/imgbin-computer-icons-portable-network-graphics-avatar-icon-design-avatar-DsZ54Du30hTrKfxBG5PbwvzgE.jpg'),
+          (authUser.user.displayName = name);
       })
       .catch((err) => alert(err.message));
   };

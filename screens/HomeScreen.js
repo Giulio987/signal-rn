@@ -2,27 +2,36 @@ import {
   SafeAreaView,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import React, { useEffect, useLayoutEffect, useState } from 'react';
 import CustomListItem from '../components/CustomListItem';
 import { Avatar } from 'react-native-elements';
-import { auth, db } from '../firebase';
 import { AntDesign, SimpleLineIcons } from '@expo/vector-icons';
+import { getAuth, setPersistence, signOut } from 'firebase/auth';
+import {
+  collection,
+  query,
+  onSnapshot,
+  getFirestore,
+} from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({ navigation }) => {
   const [chats, setChats] = useState([]);
-
+  const currentUser = getAuth().currentUser;
+  const database = getFirestore();
+  const auth = getAuth();
   const signOutUser = () => {
-    auth.signOut().then(() => {
+    signOut(auth).then(() => {
       navigation.replace('Login');
     });
   };
 
   useEffect(() => {
-    const unsubscribe = db.collection('chats').onSnapshot((snapshot) => {
+    const q = query(collection(database, 'chats'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
       setChats(
         snapshot.docs.map((doc) => ({
           id: doc.id,
@@ -49,7 +58,7 @@ const HomeScreen = ({ navigation }) => {
                 rounded
                 source={{
                   uri:
-                    auth?.currentUser?.photoUrl ||
+                    currentUser?.photoURL ||
                     'https://cdn.imgbin.com/2/4/15/imgbin-computer-icons-portable-network-graphics-avatar-icon-design-avatar-DsZ54Du30hTrKfxBG5PbwvzgE.jpg',
                 }}
               />

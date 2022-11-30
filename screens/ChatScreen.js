@@ -1,7 +1,6 @@
 import {
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,25 +15,31 @@ import { Avatar } from 'react-native-elements';
 import { AntDesign, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { Keyboard } from 'react-native';
-import { db, auth } from '../firebase';
-import * as firebase from 'firebase/compat';
+import { serverTimestamp } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import {
+  addDoc,
+  collection,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 
 const ChatScreen = ({ navigation, route }) => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
-
+  const currentUser = getAuth().currentUser;
+  const fireDb = getFirestore();
   const sendMessage = () => {
     //Keyboard.dismiss();
-    db.collection('chats')
-      .doc(route.params.id)
-      .collection('messages')
-      .add({
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        message: input,
-        displayName: (auth.currentUser ?? { displayName: '' }).displayName,
-        email: (auth.currentUser ?? { email: '' }).email,
-        photoUrl: (auth.currentUser ?? { photoUrl: '' }).photoUrl || '',
-      });
+    addDoc(collection(fireDb, 'chats', route.params.id, 'messages'), {
+      timestamp: serverTimestamp(),
+      message: input,
+      displayName: currentUser.displayName ? currentUser.displayName : 'User',
+      email: currentUser.email ? currentUser.email : 'User',
+      photoURL: currentUser.photoURL ? currentUser.photoURL : 'User',
+    });
     setInput('');
   };
 
@@ -97,19 +102,19 @@ const ChatScreen = ({ navigation, route }) => {
   }, [navigation, messages]);
 
   useLayoutEffect(() => {
-    const unsubscribe = db
-      .collection('chats')
-      .doc(route.params.id)
-      .collection('messages')
-      .orderBy('timestamp', 'desc')
-      .onSnapshot((snap) => {
-        setMessages(
-          snap.docs.map((doc) => ({
-            id: doc.id,
-            data: doc.data(),
-          }))
-        );
-      });
+    const q = query(
+      collection(fireDb, 'chats', route.params.id, 'messages'),
+      orderBy('timestamp', 'desc')
+    );
+
+    const unsubscribe = onSnapshot(q, (snap) => {
+      setMessages(
+        snap.docs.map((doc) => ({
+          id: doc.id,
+          data: doc.data(),
+        }))
+      );
+    });
 
     return unsubscribe;
   }, [route]);
@@ -134,7 +139,7 @@ const ChatScreen = ({ navigation, route }) => {
             <>
               <ScrollView contentContainerStyle={{ padding: 10 }}>
                 {messages.map(({ id, data }) =>
-                  data.email === auth.currentUser.email ? (
+                  data.email === currentUser.email ? (
                     <View key={id} style={styles.reciever}>
                       <Avatar
                         source={{
@@ -165,7 +170,9 @@ const ChatScreen = ({ navigation, route }) => {
                         bottom={-15}
                       />
                       <Text style={styles.senderText}>{data.message}</Text>
-                      <Text style={styles.senderName}>{data.displayName}</Text>
+                      <Text style={styles.senderName}>
+                        {data.displayName || 'anonymous'}
+                      </Text>
                     </View>
                   )
                 )}

@@ -1,37 +1,23 @@
 import {
   StyleSheet,
-  Text,
   View,
   Image,
   TextInput,
-  ScrollView,
   KeyboardAvoidingView,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import signalLogo from '../assets/Signal-Messenger-Icon.png';
 import Button from '../UI/Button';
-import { auth } from '../firebase';
+import useAuth from '../auth/hooks/useAuth';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((authUser) => {
-      if (authUser) {
-        navigation.replace('Home');
-      }
-    });
+  //register auth
+  const { signIn } = useAuth(true);
 
-    return () => unsubscribe;
-  }, []);
-  //TODO salvare i dati di login in modo da non doverli inserire ogni volta
-  const signIn = () => {
-    auth
-      .signInWithEmailAndPassword(email, password)
-      .catch((err) => alert(err.message));
-  };
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <StatusBar style="light" />
@@ -61,7 +47,11 @@ const LoginScreen = ({ navigation }) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Button title="Login" style={styles.button} onPress={signIn} />
+        <Button
+          title="Login"
+          style={styles.button}
+          onPress={() => signIn(email, password)}
+        />
         <Button
           title="Register"
           style={styles.button}

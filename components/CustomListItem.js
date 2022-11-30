@@ -1,20 +1,26 @@
 import { Image, StyleSheet, Text, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { ListItem, Avatar } from 'react-native-elements';
-import { db } from '../firebase';
+import {
+  collection,
+  getFirestore,
+  onSnapshot,
+  orderBy,
+  query,
+} from 'firebase/firestore';
 
 const CustomListItem = ({ id, chatName, enterChat }) => {
   const [chatMessages, setChatMessages] = useState([]);
+  const db = getFirestore();
 
   useEffect(() => {
-    const unsubscribe = db
-      .collection('chats')
-      .doc(id)
-      .collection('messages')
-      .orderBy('timestamp', 'desc')
-      .onSnapshot((snap) => {
-        setChatMessages(snap.docs.map((doc) => doc.data()));
-      });
+    const q = query(
+      collection(db, 'chats', id, 'messages'),
+      orderBy('timestamp', 'desc')
+    );
+    const unsubscribe = onSnapshot(q, (snap) => {
+      setChatMessages(snap.docs.map((doc) => doc.data()));
+    });
     return unsubscribe;
   }, []);
   return (
