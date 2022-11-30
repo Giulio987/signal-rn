@@ -8,8 +8,7 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import { preventAutoHideAsync, hideAsync } from 'expo-splash-screen';
 import { useCallback, useEffect, useState } from 'react';
-import { getAuth } from 'firebase/auth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 /**
  * TODO
  * Creare sottocomponenti ad hoc
@@ -32,17 +31,20 @@ preventAutoHideAsync();
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
   const [initialRouteName, setInitialRouteName] = useState('Login');
-  const { currentUser } = getAuth();
 
   useEffect(() => {
-    if (currentUser) {
-      setInitialRouteName('Home');
-      setAppIsReady(true);
-    } else {
-      setInitialRouteName('Login');
-      setAppIsReady(true);
-    }
-  }, [currentUser]);
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (authUser) => {
+      if (authUser) {
+        setInitialRouteName('Home');
+        setAppIsReady(true);
+      } else {
+        setInitialRouteName('Login');
+        setAppIsReady(true);
+      }
+    });
+    return unsubscribe;
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {

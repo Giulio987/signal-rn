@@ -38,7 +38,9 @@ const ChatScreen = ({ navigation, route }) => {
       message: input,
       displayName: currentUser.displayName ? currentUser.displayName : 'User',
       email: currentUser.email ? currentUser.email : 'User',
-      photoURL: currentUser.photoURL ? currentUser.photoURL : 'User',
+      photoURL: currentUser.photoURL
+        ? currentUser.photoURL
+        : 'https://cdn.imgbin.com/2/4/15/imgbin-computer-icons-portable-network-graphics-avatar-icon-design-avatar-DsZ54Du30hTrKfxBG5PbwvzgE.jpg',
     });
     setInput('');
   };
@@ -144,7 +146,7 @@ const ChatScreen = ({ navigation, route }) => {
                       <Avatar
                         source={{
                           uri:
-                            data.photoUrl ||
+                            data.photoURL ||
                             'https://cdn.imgbin.com/2/4/15/imgbin-computer-icons-portable-network-graphics-avatar-icon-design-avatar-DsZ54Du30hTrKfxBG5PbwvzgE.jpg',
                         }}
                         rounded
@@ -160,7 +162,7 @@ const ChatScreen = ({ navigation, route }) => {
                       <Avatar
                         source={{
                           uri:
-                            data.photoUrl ||
+                            data.photoURL ||
                             'https://cdn.imgbin.com/2/4/15/imgbin-computer-icons-portable-network-graphics-avatar-icon-design-avatar-DsZ54Du30hTrKfxBG5PbwvzgE.jpg',
                         }}
                         rounded
