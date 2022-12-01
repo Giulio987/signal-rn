@@ -9,12 +9,12 @@ import RegisterScreen from './screens/RegisterScreen';
 import { preventAutoHideAsync, hideAsync } from 'expo-splash-screen';
 import { useCallback, useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
+
 /**
  * TODO
  * Creare sottocomponenti ad hoc
  * Capire se tenere le chat verso l'alto o verso il basso?
  * Creare la funzionalità di inserimento immagine profilo
- * Funzionalità salvataggio offline dei token
  * Gestione degli errori
  */
 

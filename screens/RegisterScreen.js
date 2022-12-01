@@ -8,7 +8,12 @@ import {
 import React, { useLayoutEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import Button from '../UI/Button';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  updateProfile,
+} from 'firebase/auth';
+import useAuth from '../auth/hooks/useAuth';
 
 const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -22,16 +27,8 @@ const RegisterScreen = ({ navigation }) => {
     navigation.setOptions({});
   }, [navigation]); */
 
-  const register = () => {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((authUser) => {
-        (authUser.user.photoURL =
-          imageUrl ||
-          'https://cdn.imgbin.com/2/4/15/imgbin-computer-icons-portable-network-graphics-avatar-icon-design-avatar-DsZ54Du30hTrKfxBG5PbwvzgE.jpg'),
-          (authUser.user.displayName = name);
-      })
-      .catch((err) => alert(err.message));
-  };
+  const { register } = useAuth();
+
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
       <StatusBar style="light" />
@@ -75,11 +72,15 @@ const RegisterScreen = ({ navigation }) => {
           autoCorrect={false}
           value={imageUrl}
           onChangeText={(text) => setImageUrl(text)}
-          onSubmitEditing={register}
+          onSubmitEditing={() => register(email, password, imageUrl, name)}
           style={styles.input}
         />
       </View>
-      <Button title="Register" onPress={register} style={styles.button} />
+      <Button
+        title="Register"
+        onPress={() => register(email, password, imageUrl, name)}
+        style={styles.button}
+      />
       <View style={{ height: 100 }} />
     </KeyboardAvoidingView>
   );

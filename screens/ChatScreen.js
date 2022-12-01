@@ -32,7 +32,7 @@ const ChatScreen = ({ navigation, route }) => {
   const currentUser = getAuth().currentUser;
   const fireDb = getFirestore();
   const sendMessage = () => {
-    //Keyboard.dismiss();
+    //Keyboard.dismiss(); //TODO on scroll down dimiss keyboard
     addDoc(collection(fireDb, 'chats', route.params.id, 'messages'), {
       timestamp: serverTimestamp(),
       message: input,
@@ -65,7 +65,7 @@ const ChatScreen = ({ navigation, route }) => {
               rounded
               source={{
                 uri:
-                  messages[0]?.data.photoUrl ||
+                  messages[0]?.data.photoURL ||
                   'https://cdn.imgbin.com/2/4/15/imgbin-computer-icons-portable-network-graphics-avatar-icon-design-avatar-DsZ54Du30hTrKfxBG5PbwvzgE.jpg',
               }}
               size="small"

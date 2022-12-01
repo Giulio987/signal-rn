@@ -22,7 +22,6 @@ const HomeScreen = ({ navigation }) => {
   const [chats, setChats] = useState([]);
   const currentUser = getAuth().currentUser;
   const database = getFirestore();
-
   const { signOutUser } = useAuth();
 
   useEffect(() => {
