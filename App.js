@@ -11,7 +11,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
 /**
- * TODO
+ * TODO -
+ * Aggiungere sistema di notifiche
  * Creare sottocomponenti ad hoc
  * Capire se tenere le chat verso l'alto o verso il basso?
  * Creare la funzionalità di inserimento immagine profilo
